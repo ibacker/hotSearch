@@ -1,0 +1,10 @@
+[url]
+baidu = "https://top.baidu.com/api/board?platform=wise&tab=realtime"
+sina = "https://weibo.com/ajax/statuses/hot_band"
+zhihu = "https://www.zhihu.com/api/v3/feed/topstory/hot-lists/total?limit=100"
+
+[sql]
+driver = "mysql"
+address = ""
+user = ""
+passwd = ""
