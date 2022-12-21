@@ -12,6 +12,7 @@ type WBHotBandItem struct {
 	Realpos       int    `json:"realpos"`
 	Rank          int    `json:"rank"`
 	Url           string
+	HotTag        string `json:"icon_desc"` //热搜种类
 }
 
 type WBHotGov struct {
