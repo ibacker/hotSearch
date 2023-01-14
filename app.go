@@ -25,7 +25,8 @@ func main() {
 	//	fmt.Println(question[i])
 	//}
 	//getBaiduHotList(getBaiduHotSearch())
-	sql.InsertWeiboHotList(processWBHotSearch(getWBHotSearch()))
+	//sql.InsertWeiboHotList(processWBHotSearch(getWBHotSearch()))
+	sql.InsertBaiDuHotList(getBaiduHotList(getBaiduHotSearch()))
 }
 
 func createRaw(data []model.Question, fileName string) {

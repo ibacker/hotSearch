@@ -51,11 +51,12 @@ func _GetDBConnect() *sql.DB {
 }
 
 func InsertBaiDuHotList(baiduList []model.BDHotSearchItem) {
-	//dbConnection := _GetDBConnect()
-	//da := time.Now().Format("2006-01-02")
-	//for i, item := range baiduList {
-	//	InsertValue(dbConnection, "baidu", "baidu_"+da+"_"+strconv.Itoa(i), item.Word)
-	//}
+	dbConnection := _GetDBConnect()
+	da := time.Now().Format("2006-01-02")
+	for i, item := range baiduList {
+		InsertValue(dbConnection, "baidu", "baidu_"+da+"_"+strconv.Itoa(i), item.Word, strconv.Itoa(item.HotRank), item.Desc,
+			item.HotScore, item.HotTag, item.Url, da)
+	}
 }
 
 // 插入微博热搜
