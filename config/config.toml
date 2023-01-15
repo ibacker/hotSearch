@@ -5,6 +5,7 @@ zhihu = "https://www.zhihu.com/api/v3/feed/topstory/hot-lists/total?limit=100"
 
 [sql]
 driver = "mysql"
+database = "hotSearch"
 address = "127.0.0.1:3306"
-user = "root"
+user = "ibacker"
 passwd = "ibacker"

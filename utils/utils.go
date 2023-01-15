@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"hotSearch/model"
 	"io/ioutil"
@@ -8,7 +9,7 @@ import (
 	"regexp"
 )
 
-func CreateReadMe(data []model.Question) {
+func CreateReadMe(data []model.ZhiHuQuestion) {
 	fileName := "README.md"
 	if file, err := ioutil.ReadFile(fileName); err == nil {
 		reg, _ := regexp.Compile(`<!-- BEGIN -->[\W\w]*<!-- END -->`)
@@ -20,7 +21,7 @@ func CreateReadMe(data []model.Question) {
 	}
 }
 
-func CreateArchives(data []model.Question, fileName string) {
+func CreateArchives(data []model.ZhiHuQuestion, fileName string) {
 	filePath := fmt.Sprintf("./archives/%v.md", fileName)
 	if file, err := os.Create(filePath); err == nil {
 		defer file.Close()
@@ -29,11 +30,20 @@ func CreateArchives(data []model.Question, fileName string) {
 	}
 }
 
-func CreateList(data []model.Question) string {
+func CreateList(data []model.ZhiHuQuestion) string {
 	var word string
 	for _, v := range data {
 		word += fmt.Sprintf("1. [%v](%v)\n", v.Title, v.Url)
 	}
 	template := fmt.Sprintf("<!-- BEGIN -->\n\n%v\n<!-- END -->", word)
 	return template
+}
+
+func createRaw(data []model.ZhiHuQuestion, fileName string) {
+	filePath := fmt.Sprintf("./raw/%v.json", fileName)
+	if file, err := os.Create(filePath); err == nil {
+		defer file.Close()
+		bytes, _ := json.Marshal(data)
+		file.Write(bytes)
+	}
 }

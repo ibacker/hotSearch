@@ -8,42 +8,25 @@ import (
 	"hotSearch/sql"
 	"io/ioutil"
 	"net/http"
-	"os"
-	"time"
 )
-
-var fileName = time.Now().Format("2006-1-2")
 
 func main() {
 	sql.TestConnection()
-	//result := getZhiHuHot()
-	//question := getQuestion(result)
-	//createRaw(question, fileName)
-	//utils.CreateReadMe(question)
-	//utils.CreateArchives(question, fileName)
-	//for i := range question {
-	//	fmt.Println(question[i])
-	//}
-	//getBaiduHotList(getBaiduHotSearch())
-	//sql.InsertWeiboHotList(processWBHotSearch(getWBHotSearch()))
-	sql.InsertBaiDuHotList(getBaiduHotList(getBaiduHotSearch()))
+
+	sql.InsertZhiHuHotList(processZHHotList(getZhiHuHot()))
+	sql.InsertWeiboHotList(processWBHotSearch(getWBHotSearch()))
+	sql.InsertBaiDuHotList(processBDHotList(getBaiduHotSearch()))
 }
 
-func createRaw(data []model.Question, fileName string) {
-	filePath := fmt.Sprintf("./raw/%v.json", fileName)
-	if file, err := os.Create(filePath); err == nil {
-		defer file.Close()
-		bytes, _ := json.Marshal(data)
-		file.Write(bytes)
-	}
-}
-
-func getQuestion(result *model.HotList) []model.Question {
-	var questionList []model.Question
+func processZHHotList(result *model.HotList) []model.ZhiHuQuestion {
+	var questionList []model.ZhiHuQuestion
 	for _, v := range result.Data {
-		question := model.Question{
-			Title: v.Target.Title,
-			Url:   fmt.Sprintf("https://www.zhihu.com/question/%v", v.Target.Id),
+		var question = model.ZhiHuQuestion{
+			Title:    v.Target.Title,
+			Url:      fmt.Sprintf("https://www.zhihu.com/question/%v", v.Target.Id),
+			Desc:     v.Target.Desc,
+			HotTag:   v.CardLabel.Type,
+			HotScore: v.DetailText,
 		}
 		questionList = append(questionList, question)
 	}
@@ -86,7 +69,7 @@ func getBaiduHotSearch() *model.BDHotSearch {
 *
 处理百度热搜内容
 */
-func getBaiduHotList(result *model.BDHotSearch) []model.BDHotSearchItem {
+func processBDHotList(result *model.BDHotSearch) []model.BDHotSearchItem {
 	var hotSearchList []model.BDHotSearchItem
 
 	var cards = result.BDDate.BDCards[0]
@@ -98,9 +81,6 @@ func getBaiduHotList(result *model.BDHotSearch) []model.BDHotSearchItem {
 	return hotSearchList
 }
 
-/*
-获取微博热搜榜
-*/
 func getWBHotSearch() *model.WBHotSearch {
 	url := config.Conf.Get("url.sina").(string)
 	resp, _ := http.Get(url)
@@ -127,6 +107,3 @@ func processWBHotSearch(result *model.WBHotSearch) []model.WBHotBandItem {
 	}
 	return hotSearchList
 }
-
-//https://weibo.com/ajax/statuses/hot_band/
-//https://m.weibo.cn/api/container/getIndex?containerid=106003type%3D25%26t%3D3%26disable_hot%3D1%26filter_type%3Drealtimehot
