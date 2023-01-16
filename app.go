@@ -3,19 +3,28 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/robfig/cron"
 	"hotSearch/config"
 	"hotSearch/model"
 	"hotSearch/sql"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
 func main() {
 	sql.TestConnection()
 
-	sql.InsertZhiHuHotList(processZHHotList(getZhiHuHot()))
-	sql.InsertWeiboHotList(processWBHotSearch(getWBHotSearch()))
-	sql.InsertBaiDuHotList(processBDHotList(getBaiduHotSearch()))
+	c := cron.New()
+	c.AddFunc("0 0 8 * * ?", func() {
+		log.Println("Run models.CleanAllTag...")
+		sql.InsertZhiHuHotList(processZHHotList(getZhiHuHot()))
+		sql.InsertWeiboHotList(processWBHotSearch(getWBHotSearch()))
+		sql.InsertBaiDuHotList(processBDHotList(getBaiduHotSearch()))
+	})
+	c.Start()
+	select {}
+
 }
 
 func processZHHotList(result *model.HotList) []model.ZhiHuQuestion {
@@ -74,7 +83,6 @@ func processBDHotList(result *model.BDHotSearch) []model.BDHotSearchItem {
 
 	var cards = result.BDDate.BDCards[0]
 	for _, v := range cards.BDHotSearchContent {
-		fmt.Println(v)
 		hotSearchList = append(hotSearchList, v)
 	}
 
@@ -102,7 +110,6 @@ func processWBHotSearch(result *model.WBHotSearch) []model.WBHotBandItem {
 
 	for _, v := range bandList.WBBandList {
 		v.Url = "https://s.weibo.com/weibo?q=%23" + v.Word + "%23"
-		fmt.Println(v)
 		hotSearchList = append(hotSearchList, v)
 	}
 	return hotSearchList

@@ -36,7 +36,7 @@ func _SQLConnection(driver, user, passwd, address string) {
 		log.Fatal(err2)
 	}
 
-	fmt.Println(version)
+	log.Println(version)
 }
 
 func _GetDBConnect() *sql.DB {
