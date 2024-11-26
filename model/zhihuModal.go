@@ -10,7 +10,7 @@ type ZhiHuQuestion struct {
 
 type Target struct {
 	Title string `json:"title"`
-	Id    int32  `json:"id"`
+	Id    int64  `json:"id"`
 	Desc  string `json:"excerpt"`
 }
 
